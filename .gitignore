@@ -1,0 +1,4 @@
+/bluebird
+/dist/
+*.test
+*.out

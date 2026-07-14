@@ -1,0 +1,62 @@
+version: 2
+
+project_name: bluebird
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: bluebird
+    main: ./cmd/bluebird
+    binary: bluebird
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/x0c/bluebird-cli/internal/version.Version={{ .Version }}
+      - -X github.com/x0c/bluebird-cli/internal/version.Commit={{ .Commit }}
+      - -X github.com/x0c/bluebird-cli/internal/version.Date={{ .Date }}
+
+archives:
+  - id: bluebird
+    formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Os }}_{{ .Arch }}
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  github:
+    owner: x0c
+    name: bluebird-cli
+
+# brews (Formula/) was fully removed in goreleaser v2.16; homebrew_casks (Casks/) is the
+# current recommended replacement for distributing pre-compiled CLI binaries via Homebrew.
+homebrew_casks:
+  - name: bluebird
+    binaries:
+      - bluebird
+    directory: Casks
+    homepage: "https://github.com/x0c/bluebird-cli"
+    description: "Agent-friendly CLI for the Bluebird weather-discovery service"
+    repository:
+      owner: x0c
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
