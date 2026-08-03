@@ -56,7 +56,7 @@ scripts/acceptance.sh          # 对生产真实跑一遍验收清单，逐项�
 ## 发布
 
 - SemVer git tag `v*` 触发 `.goreleaser.yaml`：darwin/linux × amd64/arm64，GitHub Release，同时维护 `x0c/homebrew-tap` 的 `Formula/bluebird.rb`（Go 二进制配方，goreleaser 原生支持）。`install.sh` 提供 curl\|bash 兜底安装。三条安装路径（brew / install.sh / go install）同步维护，改一条要回头检查其余描述是否还准确。
-- Remote：GitHub `github.com/x0c/bluebird-cli`（origin，CI/Release/Homebrew tap 都在这）+ Forgejo 备份镜像 `ssh://git@10.10.10.2:2222/Max/bluebird-cli.git`（只 push，不跑 CI）。
+- Remote：GitHub `github.com/x0c/bluebird-cli`（origin，CI/Release/Homebrew tap 都在这）+ 内网 Forgejo 备份镜像 `Max/bluebird-cli`（只 push，不跑 CI；具体地址见个人基础设施知识库，**本仓库公开，不要写内网地址**）。
 
 ## OpenConductor 接入（P6，可选阶段）
 
