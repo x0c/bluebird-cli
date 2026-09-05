@@ -4,6 +4,7 @@ package auth
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,7 +12,7 @@ import (
 
 // 默认值：生产地址、Supabase issuer、自签/请求超时。
 const (
-	DefaultBaseURL        = "https://aura.caozc.top"
+	DefaultBaseURL        = "https://bluebird.caozc.top"
 	DefaultIssuer         = "https://auth.caozc.top"
 	DefaultTimeoutSeconds = 30
 	selfSignTTL           = 5 * time.Minute
@@ -37,13 +38,19 @@ type Config struct {
 }
 
 // LoadConfig 从环境变量读取配置；getenv 传入以便测试注入，不直接依赖 os.Getenv。
+//
+// JWTSecret 和 UserID 都在本地未设置时回退到 OpenConductor 管家共享的
+// OPENCONDUCTOR_SUPABASE_JWT_SECRET / OPENCONDUCTOR_ADMIN_USERS（取首个），
+// 与 TempoTask 的 cmd/tempo/config.go 约定一致——两个工具共用同一套
+// auth.caozc.top Supabase 身份，OpenConductor 沙箱环境下无需再单独配置
+// BLUEBIRD_USER_ID 就能"开箱即用"。
 func LoadConfig(getenv func(string) string) Config {
 	return Config{
 		BaseURL:   firstNonEmpty(getenv("BLUEBIRD_BASE_URL"), DefaultBaseURL),
 		Token:     getenv("BLUEBIRD_TOKEN"),
 		JWTSecret: firstNonEmpty(getenv("BLUEBIRD_JWT_SECRET"), getenv("OPENCONDUCTOR_SUPABASE_JWT_SECRET")),
 		JWTIssuer: firstNonEmpty(getenv("BLUEBIRD_JWT_ISSUER"), DefaultIssuer),
-		UserID:    getenv("BLUEBIRD_USER_ID"),
+		UserID:    firstNonEmpty(getenv("BLUEBIRD_USER_ID"), firstCSVValue(getenv("OPENCONDUCTOR_ADMIN_USERS"))),
 		Timeout:   DefaultTimeoutSeconds * time.Second,
 	}
 }
@@ -100,6 +107,16 @@ func firstNonEmpty(vals ...string) string {
 	for _, v := range vals {
 		if v != "" {
 			return v
+		}
+	}
+	return ""
+}
+
+// firstCSVValue 取逗号分隔列表的第一个非空项，用于解析 OPENCONDUCTOR_ADMIN_USERS。
+func firstCSVValue(value string) string {
+	for _, part := range strings.Split(value, ",") {
+		if trimmed := strings.TrimSpace(part); trimmed != "" {
+			return trimmed
 		}
 	}
 	return ""

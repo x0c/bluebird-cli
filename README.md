@@ -1,13 +1,13 @@
 # bluebird
 
-An agent-friendly command-line client for [Bluebird](https://aura.caozc.top), a weather-discovery service that finds "good weather moments" — sunset glow, crystal-clear skies, starry nights, rainbows, and nine other photogenic atmospheric scenes — rather than just reporting temperature and rain chance.
+An agent-friendly command-line client for [Bluebird](https://bluebird.caozc.top), a weather-discovery service that finds "good weather moments" — sunset glow, crystal-clear skies, starry nights, rainbows, and nine other photogenic atmospheric scenes — rather than just reporting temperature and rain chance.
 
 `bluebird` is designed for two audiences at once:
 
 - **Humans**, via readable table/text output and interactive prompts.
 - **AI agents / LLM tool-use**, via a stable `--json` envelope, fine-grained exit codes, `--dry-run` for every write operation, and offline `describe`/`doctor`/`version` commands for self-diagnosis.
 
-It talks to the public Bluebird API at `https://aura.caozc.top` by default. No account signup flow is bundled — you provide your own bearer token or a JWT signing secret via environment variables (see [Authentication](#authentication)).
+It talks to the public Bluebird API at `https://bluebird.caozc.top` by default. No account signup flow is bundled — you provide your own bearer token or a JWT signing secret via environment variables (see [Authentication](#authentication)).
 
 ## Install
 
@@ -125,7 +125,7 @@ Credentials are read from environment variables only — never from flags, never
 | `BLUEBIRD_JWT_SECRET` | HS256 signing secret; the CLI self-signs a short-lived (5 min) token |
 | `BLUEBIRD_USER_ID` | Subject (user UUID) for the self-signed token |
 | `BLUEBIRD_JWT_ISSUER` | Overrides the default token issuer |
-| `BLUEBIRD_BASE_URL` | Overrides the default `https://aura.caozc.top` |
+| `BLUEBIRD_BASE_URL` | Overrides the default `https://bluebird.caozc.top` |
 
 `BLUEBIRD_TOKEN` takes priority if set; otherwise `BLUEBIRD_JWT_SECRET` + `BLUEBIRD_USER_ID` are used to self-sign a token. Run `bluebird doctor` to check which path is active and whether the backend is reachable — it never prints the secret itself, only "configured" / "not configured".
 

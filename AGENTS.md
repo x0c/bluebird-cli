@@ -2,7 +2,7 @@
 
 通用工程规范：[Go 规范](../../_standards/go.md)
 
-`bluebird` 是 Bluebird（「等好天气」）天气发现服务的命令行客户端，面向人与大模型 Agent 双受众设计，遵循 skill `agent-friendly-cli` 的 P0/P1 契约。默认连接线上生产 `https://aura.caozc.top`。未来会接入 OpenConductor 管家（见文末）。
+`bluebird` 是 Bluebird（「等好天气」）天气发现服务的命令行客户端，面向人与大模型 Agent 双受众设计，遵循 skill `agent-friendly-cli` 的 P0/P1 契约。默认连接线上生产 `https://bluebird.caozc.top`。未来会接入 OpenConductor 管家（见文末）。
 
 设计方案见 `/home/vibecoder/.claude/plans/bluebird-ios-go-glowing-sphinx.md`（2026-07-14，用户已批准）。
 
@@ -50,8 +50,8 @@ scripts/acceptance.sh          # 对生产真实跑一遍验收清单，逐项�
 
 - `go build ./...`、`go vet ./...`、`go test -race ./...` 交付前必过（`internal/cmdtree` 下的 `fakebackend_test.go`/`integration_test.go` 用内存假后端驱动真实命令树，覆盖写请求计数、幂等收敛、退出码映射；改命令面或 API 契约后优先补这里的用例，不要只加纯函数单测）。
 - `golangci-lint run ./...`、`govulncheck ./...`（依赖/网络/鉴权链路变更后）。
-- 涉及真实网络调用的命令（`doctor` 在线段、`conditions`/`watch`/`astro`/`air` 等）改动后，对生产 `https://aura.caozc.top` 跑一次真实冒烟，不能只凭单测/集成测试断言完成；写操作（`watch create/update/delete`）冒烟要跑真实闭环并清理测试数据（建了就删）。
-- `scripts/acceptance.sh`：按 skill `agent-friendly-cli` 的 `references/verification.md` 逐条粘证据，对生产真实跑一遍。用法 `BLUEBIRD_TOKEN=... ./scripts/acceptance.sh`（或 `BLUEBIRD_JWT_SECRET`+`BLUEBIRD_USER_ID`），`BLUEBIRD_BIN` 可覆盖要测的二进制路径。脚本本身不含任何取密钥逻辑，也不硬编码内部基础设施地址——这点在改脚本时必须保持，公开仓库不能泄漏内网信息。
+- 涉及真实网络调用的命令（`doctor` 在线段、`conditions`/`watch`/`astro`/`air` 等）改动后，对生产 `https://bluebird.caozc.top` 跑一次真实冒烟，不能只凭单测/集成测试断言完成；写操作（`watch create/update/delete`）冒烟要跑真实闭环并清理测试数据（建了就删）。
+- `scripts/acceptance.sh`：按 skill `agent-friendly-cli` 的 `~/.claude/skills/agent-friendly-cli/references/verification.md` 逐条粘证据，对生产真实跑一遍。用法 `BLUEBIRD_TOKEN=... ./scripts/acceptance.sh`（或 `BLUEBIRD_JWT_SECRET`+`BLUEBIRD_USER_ID`），`BLUEBIRD_BIN` 可覆盖要测的二进制路径。脚本本身不含任何取密钥逻辑，也不硬编码内部基础设施地址——这点在改脚本时必须保持，公开仓库不能泄漏内网信息。
 
 ## 发布
 
@@ -60,7 +60,7 @@ scripts/acceptance.sh          # 对生产真实跑一遍验收清单，逐项�
 
 ## OpenConductor 接入（P6，可选阶段）
 
-`docs/SKILL.md` 是登记到 `~/.openconductor/tools/bluebird/SKILL.md` 的源文件，frontmatter `name:` 必须等于可执行文件名 `bluebird`（历史教训见 agentsync `AGENT_TOOL_CLI_INTEGRATION_GUIDE.md`）。接入后需要在 OpenConductor `server/cmd/conductor/main.go` 的 codex 沙箱 passthrough allowlist 里加 `BLUEBIRD_*` 四个变量，否则 codex 运行时管家调用会因环境变量被剥离而 `auth_not_configured`；claude 与 codex 两种管家运行时都要真机冒烟验证。
+本仓 `docs/` 目前为空；接入 OpenConductor 时再补 `docs/SKILL.md` 作为源文件，登记到 `~/.openconductor/tools/bluebird/SKILL.md`，frontmatter `name:` 必须等于可执行文件名 `bluebird`（历史教训见 `~/.config/agentsync/docs/AGENT_TOOL_CLI_INTEGRATION_GUIDE.md`）。接入后需要在 OpenConductor `server/cmd/conductor/main.go` 的 codex 沙箱 passthrough allowlist 里加 `BLUEBIRD_*` 四个变量，否则 codex 运行时管家调用会因环境变量被剥离而 `auth_not_configured`；claude 与 codex 两种管家运行时都要真机冒烟验证。
 
 ## 文档导航
 
