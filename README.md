@@ -75,7 +75,7 @@ Every command supports `--json`, which is also auto-enabled whenever stdout is n
   "ok": true,
   "data": { "...": "..." },
   "error": null,
-  "meta": { "duration_ms": 123, "version": "0.1.0" }
+  "meta": { "duration_ms": 123, "version": "0.1.1" }
 }
 ```
 
@@ -93,7 +93,7 @@ On failure, `data` is `null` and `error` is populated — and this is still writ
     "retryable": false,
     "details": { "candidates": [ "..." ] }
   },
-  "meta": { "duration_ms": 448, "version": "0.1.0" }
+  "meta": { "duration_ms": 448, "version": "0.1.1" }
 }
 ```
 
