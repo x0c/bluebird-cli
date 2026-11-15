@@ -32,7 +32,11 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.12.2
+          # Keep this built with the same or a newer Go than the "stable"
+          # toolchain above: an older build panics with "file requires newer Go
+          # version" while type-checking the newer standard library.
+          # v2.15.0 is built with go1.27.
+          version: v2.15.0
 
   vulncheck:
     runs-on: ubuntu-latest
